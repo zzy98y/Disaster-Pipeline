@@ -24,11 +24,12 @@ def load_data(database_filepath):
     df = pd.read_sql_table('etl_clean',engine)
     X_old = df['message']
     Y_old = df.iloc[:,4:41]
+    # load all the data from the database and set up the target and attributes for ML 
     Not_NaN = [i for i in range(len(Y_old)) if not any(Y_old.iloc[i].isnull())]
     X = X_old.iloc[Not_NaN]
     Y = Y_old.iloc[Not_NaN]
     category_name = Y.columns
-    
+    # drop all the NaN values in row
     return X,Y,category_name
     
    
@@ -78,7 +79,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
         Y_true = np.array(Y_test.iloc[i].values)
         Target = [category_names[i]]
         print(classification_report(Y_true, Y_pred, target_names= Target))
-        
+    
 
 
 def save_model(model, model_filepath):
@@ -86,6 +87,7 @@ def save_model(model, model_filepath):
     model_pickle = open(pkl_file,'wb')
     pickle.dump(model, model_pickle)
     model_pickle.close()
+    # Save the model as a pickle file 
 
 def main():
     if len(sys.argv) == 3:
