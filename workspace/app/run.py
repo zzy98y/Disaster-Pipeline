@@ -40,22 +40,44 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-    
+    df_sar = df[df['search_and_rescue']==1]
+    sar_counts = df_sar.groupby('genre').count()['message']
+    sar_names = list(sar_counts.index)
+    df_ir = df[df['infrastructure_related']==1]
+    ir_counts = df_ir.groupby('genre').count()['message']
+    ir_names = list(ir_counts.index)
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=sar_names,
+                    y=sar_counts
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Distribution of Search and Rescure Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=ir_names,
+                    y=ir_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Infrastructure Related Message Genres',
                 'yaxis': {
                     'title': "Count"
                 },
@@ -65,6 +87,7 @@ def index():
             }
         }
     ]
+    
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
