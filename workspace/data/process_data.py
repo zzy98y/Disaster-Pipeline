@@ -3,13 +3,14 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    "this function load the data messages and categories and merge into one called df and return this df"
     messages = pd.read_csv(messages_filepath)   # load messages data
     categories = pd.read_csv(categories_filepath) # load categories data
     df = pd.merge(messages,categories,on = 'id') # merge both dataframe on the common key 'id'
     return df
 
 def clean_data(df):
-    
+    "this function expand the categories column and extract the letter and set as column name and number as the result and drop the original categories column, and drop duplicates"
     cate = df['categories'].str.split(';',expand = True) 
     # seperate each category seperated by colon and form a seperate column 
     row = cate.iloc[0].tolist()
@@ -35,6 +36,7 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
+    "This function save the cleaned data into a SQLite Database "
     engine = create_engine('sqlite:///{}'.format(database_filename))
     df.to_sql('etl_clean', engine, index=False)
 
