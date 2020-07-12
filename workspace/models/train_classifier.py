@@ -20,6 +20,7 @@ from sklearn.model_selection import GridSearchCV
 
 
 def load_data(database_filepath):
+    "load the data from SQLite Database and drop the null values and extract category name, target value Y and attributes X and return them"
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('etl_clean',engine)
     X_old = df['message']
@@ -35,6 +36,7 @@ def load_data(database_filepath):
    
     
 def tokenize(text):
+    "clean and tokenize the message and return the tokens in each message"
     url_regx = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     detected_urls = re.findall(url_regx,text)
     
@@ -54,6 +56,7 @@ def tokenize(text):
 
 
 def build_model():
+    "build a pipeline that has MultiOutput and apply GridSearch to find the best parameter"
     pipeline = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
     ('tfidf', TfidfTransformer()),
@@ -74,6 +77,7 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    "evaluate the model in each category using sklearn function classification_report"
     for i in range(len(category_names)):
         Y_pred = model.predict(X_test)[i]
         Y_true = np.array(Y_test.iloc[i].values)
@@ -83,6 +87,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    "Save the model as a pickle file "
     pkl_file = model_filepath
     model_pickle = open(pkl_file,'wb')
     pickle.dump(model, model_pickle)
