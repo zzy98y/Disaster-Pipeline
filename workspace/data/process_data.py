@@ -32,6 +32,10 @@ def clean_data(df):
     df_dup = df[df.duplicated()]
     # drop duplicates
     df.drop(df_dup.index,inplace = True)
+    # find the rows with related is 2 which doesn't make any sense 
+    df_related_2 = df[df['related'] == 2] 
+    # drop the row that related is 2 
+    df.drop(df_related_2.index,inplace = True) 
     
     return df
 
